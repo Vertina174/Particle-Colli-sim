@@ -22,7 +22,7 @@ for(int i=0; i<size1; i++){
     uniform_int_distribution<> random_height(particles[i].radius,height-particles[i].radius);
     particles[i].x=random_width(gen);
     particles[i].y=random_height(gen);
-    uniform_int_distribution<> random_speed(-2.00,2.00);
+    uniform_int_distribution<> random_speed(-5.00,5.00);
     particles[i].vx=random_speed(gen);
     particles[i].vy=random_speed(gen);
 
@@ -49,7 +49,28 @@ void updateparticle(particle *particles){
     particles[i].y+=particles[i].vy;
 }
 }
-
+void particlecollison(particle *particles){
+    for(int i=0; i<size1; i++){
+        for(int j=0; j<size1; j++){
+            if(i==j) continue;
+            Vector2 c1={particles[i].x, particles[i].y};
+            Vector2 c2={particles[j].x, particles[j].y};
+            bool collide = CheckCollisionCircles(c1,particles[i].radius,c2,particles[j].radius);
+            
+            if(collide){
+                particles[i].x-=20;
+                particles[i].y-=20;
+                particles[j].x+=20;
+                particles[j].y+=20;
+                 particles[i].vx*=-1;
+                 particles[i].vy*=-1;
+                 particles[j].vx*=-1;
+                 particles[j].vy*=-1;
+                 cout<<"Collision Occured";
+            }
+        }
+    }
+}
 int main(){
 particle particles[size1];
 InitWindow(width,height,"Particle Collision Simulator");
@@ -61,6 +82,7 @@ BeginDrawing();
 ClearBackground(BLACK);
 drawparticle(particles);
 updateparticle(particles);
+particlecollison(particles);
 DrawFPS(5,5);
 EndDrawing();
 }
